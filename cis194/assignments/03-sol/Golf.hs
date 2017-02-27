@@ -2,46 +2,36 @@ module Golf where
 
 import Data.List
 
-skips :: [a] -> [[a]]
 skips []= []
-skips xs = [ (skip x xs) | x <- [1,2..(length xs)]]
+skips q = [ (s x q) | x <- [1..(length q)]]
 
-skip :: Int -> [a] -> [a]
-skip n [] = []
-skip n ls@(x:xs) = x:(skip n (drop n ls))
+t n [] = []
+t n (x:q) = x:(s n q)
 
-localMaxima :: [Integer] -> [Integer]
-localMaxima (x:y:xs) = 
-	if (x>y) 
-		then (x:p) 
-		else if(y>x) 
-			then localMaxima (y:xs) 
-			else p
-	where p = notMax (y:xs) 
-localMaxima l = l
+s n [] = []
+s n l@(x:q) = t n (drop (n-1) l)
 
-notMax :: [Integer]-> [Integer]
-notMax (x:y:xs) = 
-	if(y>x) 
-		then localMaxima (y:xs) 
-		else notMax (y:xs)
-notMax _ = []
+localMaxima (x:l@(y:z:q)) 
+  | (y>x && y>z) = y:p 
+  | True = p
+  where p = localMaxima l 
+localMaxima _ = []
 
-histogram :: [Integer] -> String
-histogram l = unlines ((getBase l) ++ [(replicate 10 '=')] ++ [['0'..'9']])
+histogram l = unlines ((h (map (c l) [0..9])) ++ "==========":[['0'..'9']])
 
-getBase :: [Integer] -> [String]
-getBase l = getHist (map (count l) [0..9])
+c (x:q) y 
+  |(x==y) = (1 + p)
+  | True = p
+  where p = c q y
+c _ _= 0
 
-count :: [Integer] -> Integer -> Integer
-count [] _= 0
-count (x:xs) y = if(x==y) then 1 + p else p
-	where p = (count xs y)
+h l 
+  | (p == 0) = [] 
+  | True = reverse [w l x |x <- [1..p]]
+    where p = maximum l
 
-getHist :: [Integer] -> [String]
-getHist l= if(p == 0) then [] else [getIthRow l x |x <- [p..1]]
-	where p = maximum l
-
-getIthRow :: [Integer] -> Integer -> String
-getIthRow [] _ = []
-getIthRow (x:xs) m = if(x>=m) then "*" ++ (getIthRow xs m) else " " ++ (getIthRow xs m)
+w (x:q) m 
+  | (x>=m) = '*':p 
+  | True = ' ':p
+  where p=w q m
+w _ _ = []
