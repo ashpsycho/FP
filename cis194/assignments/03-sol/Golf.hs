@@ -8,6 +8,7 @@ s n [] = []
 s n l@(x:q) = x:(s n (drop n l))
 
 localMaxima = k
+k :: [Integer] -> [Integer]
 k (x:l@(y:z:q))
   | (y>x && y>z) = y:p
   | True = p
