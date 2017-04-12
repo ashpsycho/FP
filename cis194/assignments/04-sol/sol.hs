@@ -31,9 +31,8 @@ xor = odd.length.(filter (\x -> x))
 map' :: (a->b) -> [a] -> [b]
 map' f = foldr (\x bs-> (f x):bs) []
 
--- this is wrong
 myFoldl :: (a -> b -> a) -> a -> [b] -> a
-myFoldl f acc = foldr (\x acc -> f acc x) acc 
+myFoldl f acc = (foldr (\x acc -> f acc x) acc).reverse 
 
 sieveSundaram :: Integer -> [Integer]
 sieveSundaram n= (map (\x -> (1+2*x))
